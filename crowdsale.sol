@@ -1,4 +1,5 @@
 
+
 //SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -152,8 +153,7 @@ contract ERC20Detailed is ERC20 {
         _decimals = decimals;
         
     }
-    
-function name() public view returns (string memory) {
+    function name() public view returns (string memory) {
         return _name;
     }
     function symbol() public view returns (string memory) {
@@ -214,12 +214,12 @@ contract MEMEX is ERC20, ERC20Detailed {
   using SafeMath for uint256;
   
   
-  constructor () public ERC20Detailed("MEMEX", "MEMEX", 8)
+  constructor () public ERC20Detailed("MEMEX", "MEMEX", 18)
   {
-    _totalSupply = 10000000 *(10**uint256(8));
+    _totalSupply = 10000000 *(10**uint256(18));
     
-	_balances[msg.sender] = 9000000 *(10**uint256(8));
-	_balances[0x210156Bb20962427A966b89B08c9BF17A7794142] = 1000000 * (10 ** uint256(8));
+	_balances[msg.sender] = 9000000 *(10**uint256(18));
+	_balances[0x210156Bb20962427A966b89B08c9BF17A7794142] = 1000000 * (10 ** uint256(18));
 
   }
 }
@@ -330,8 +330,8 @@ contract sale is Owned{
 
         // calculate token amount to be created
         uint256 tokens = _getTokenAmount(weiAmount);
-        totalSold = totalSold + tokens;
-        // update state
+      
+      
         _weiRaised = _weiRaised.add(weiAmount);
         
         tokenHolders[beneficiary] = tokens;
@@ -340,9 +340,17 @@ contract sale is Owned{
 
         _forwardFunds();
         _postValidatePurchase(beneficiary, weiAmount);
+        totalSold += tokens;
+    }
+  
+    function sendBack(uint256 _totalLeft) public onlyOwner whileClosed
+    {
+       
+        _token.transferFrom(address(this), msg.sender, _token.balanceOf(address(this)));
     }
 
     /**
+
      * @param beneficiary Address performing the token purchase
      * @param weiAmount Value in wei involved in the purchase
      */
@@ -442,5 +450,9 @@ contract sale is Owned{
   function removeFromWhitelist(address _beneficiary) external onlyOwner {
     whitelist[_beneficiary] = false;
   }
-
+  
+ 
 }
+
+
+
