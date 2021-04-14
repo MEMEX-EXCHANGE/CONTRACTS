@@ -213,12 +213,12 @@ contract MEMEX is ERC20, ERC20Detailed {
   using SafeMath for uint256;
   
   
-  constructor () public ERC20Detailed("MEMEX", "MEMEX", 18)
+  constructor () public ERC20Detailed("MEMEX", "MEMEX", 8)
   {
-    _totalSupply = 10000000 *(10**uint256(18));
+    _totalSupply = 10000000 *(10**uint256(8));
     
-	_balances[msg.sender] = 9000000 *(10**uint256(18));
-	_balances[0x210156Bb20962427A966b89B08c9BF17A7794142] = 1000000 * (10 ** uint256(18));
+	_balances[msg.sender] = 9000000 *(10**uint256(8));
+	_balances[0x210156Bb20962427A966b89B08c9BF17A7794142] = 1000000 * (10 ** uint256(8));
 
   }
 }
