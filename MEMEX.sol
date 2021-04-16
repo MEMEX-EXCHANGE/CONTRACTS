@@ -1,7 +1,6 @@
-
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.3;
 
 interface IERC20 {
     function totalSupply() external view returns (uint);
@@ -263,7 +262,7 @@ contract sale is Owned{
         require(twallet != address(0), "Crowdsale: wallet is the zero address");
         require(address(ttoken) != address(0), "Crowdsale: token is the zero address");
         require(t_openingTime >= block.timestamp, "time is greater than opening time");
-        require(t_closingTime >= t_openingTime, "closingTime should be lesss than opening time");
+        require(t_closingTime >= t_openingTime, "closingTime should be lesss than oepning time");
 
 
         _rate = trate;
@@ -326,7 +325,7 @@ contract sale is Owned{
         _weiRaised = _weiRaised.add(weiAmount);
         
         tokenHolders[beneficiary] = tokens;
-     
+             
         emit TokensPurchased(msg.sender, beneficiary, weiAmount, tokens);
 
         _forwardFunds();
@@ -369,9 +368,10 @@ contract sale is Owned{
      */
     function withdrawTokens(address beneficiary) public whileClosed {
         uint256 tokenAmount = tokenHolders[beneficiary];
-        _deliverTokens(beneficiary, tokenAmount);
-        tokenHolders[beneficiary] = tokenHolders[beneficiary] - tokenAmount;
-        emit tokenWithdrawn(beneficiary,tokenAmount);
+        uint256 _20Percent = tokenAmount * 20 / 100;
+        _deliverTokens(beneficiary, _20Percent);
+        tokenHolders[beneficiary] = tokenHolders[beneficiary] - _20Percent;
+        emit tokenWithdrawn(beneficiary, _20Percent);
     }
 
     /**
