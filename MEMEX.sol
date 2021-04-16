@@ -146,10 +146,10 @@ contract ERC20Detailed is ERC20 {
     string private _symbol;
     uint8 private _decimals;
 
-    constructor (string memory name, string memory symbol, uint8 decimals) public {
-        _name = name;
-        _symbol = symbol;
-        _decimals = decimals;
+    constructor (string memory tname, string memory tsymbol, uint8 tdecimals) public {
+        _name = tname;
+        _symbol = tsymbol;
+        _decimals = tdecimals;
         
     }
     function name() public view returns (string memory) {
@@ -258,30 +258,22 @@ contract sale is Owned{
     event TokensPurchased(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event tokenWithdrawn(address indexed purchaser, uint256 amount);
 
-    constructor (uint256 rate, address payable wallet, IERC20 token, uint256 _openingTime, uint256 _closingTime) public {
-        require(rate > 0, "Crowdsale: rate is 0");
-        require(wallet != address(0), "Crowdsale: wallet is the zero address");
-        require(address(token) != address(0), "Crowdsale: token is the zero address");
-        require(_openingTime >= block.timestamp, "time is greater than opening time");
-        require(_closingTime >= _openingTime, "closingTime should be lesss than oepning time");
+    constructor (uint256 trate, address payable twallet, IERC20 ttoken, uint256 t_openingTime, uint256 t_closingTime) public{
+        require(trate > 0, "Crowdsale: rate is 0");
+        require(twallet != address(0), "Crowdsale: wallet is the zero address");
+        require(address(ttoken) != address(0), "Crowdsale: token is the zero address");
+        require(t_openingTime >= block.timestamp, "time is greater than opening time");
+        require(t_closingTime >= t_openingTime, "closingTime should be lesss than oepning time");
 
 
-        _rate = rate;
-        _wallet = wallet;
-        _token = token;
-        openingTime = _openingTime;
-        closingTime = _closingTime;
+        _rate = trate;
+        _wallet = twallet;
+        _token = ttoken;
+        openingTime = t_openingTime;
+        closingTime = t_closingTime;
     }
 
  
-    fallback () external payable {
-        buyTokens(msg.sender);
-    }
-    
-    receive() external payable
-    {
-        buyTokens(msg.sender);
-    }
     /**
      * @return the token being sold.
      */
@@ -322,7 +314,7 @@ contract sale is Owned{
          _;
      }
 
-    function buyTokens(address beneficiary) public payable {
+    function buyTokens(address beneficiary) public payable isWhitelisted(beneficiary){
         uint256 weiAmount = msg.value;
  
         _preValidatePurchase(beneficiary, weiAmount);
@@ -338,18 +330,17 @@ contract sale is Owned{
         emit TokensPurchased(msg.sender, beneficiary, weiAmount, tokens);
 
         _forwardFunds();
-        _postValidatePurchase(beneficiary, weiAmount);
+       
         totalSold += tokens;
     }
   
-    function sendBack(uint256 _totalLeft) public onlyOwner whileClosed
+    function sendBack() external onlyOwner whileClosed
     {
        
         _token.transferFrom(address(this), msg.sender, _token.balanceOf(address(this)));
     }
 
     /**
-
      * @param beneficiary Address performing the token purchase
      * @param weiAmount Value in wei involved in the purchase
      */
@@ -359,15 +350,6 @@ contract sale is Owned{
         this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
     }
 
-    /**
-     * @dev Validation of an executed purchase. Observe state and use revert statements to undo rollback when valid
-     * conditions are not met.
-     * @param beneficiary Address performing the token purchase
-     * @param weiAmount Value in wei involved in the purchase
-     */
-    function _postValidatePurchase(address beneficiary, uint256 weiAmount) internal view {
-        // solhint-disable-previous-line no-empty-blocks
-    }
 
     /**
      * @dev Source of tokens. Override this method to modify the way in which the crowdsale ultimately gets and sends
@@ -388,6 +370,7 @@ contract sale is Owned{
     function withdrawTokens(address beneficiary) public whileClosed {
         uint256 tokenAmount = tokenHolders[beneficiary];
         _deliverTokens(beneficiary, tokenAmount);
+        tokenHolders[beneficiary] = tokenHolders[beneficiary] - tokenAmount;
         emit tokenWithdrawn(beneficiary,tokenAmount);
     }
 
@@ -451,7 +434,12 @@ contract sale is Owned{
   }
   
  
+    fallback () external payable {
+        buyTokens(msg.sender);
+    }
+    
+    receive() external payable
+    {
+        buyTokens(msg.sender);
+    }
 }
-
-
-
