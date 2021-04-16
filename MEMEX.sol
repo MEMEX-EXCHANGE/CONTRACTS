@@ -263,7 +263,7 @@ contract sale is Owned{
         require(twallet != address(0), "Crowdsale: wallet is the zero address");
         require(address(ttoken) != address(0), "Crowdsale: token is the zero address");
         require(t_openingTime >= block.timestamp, "time is greater than opening time");
-        require(t_closingTime >= t_openingTime, "closingTime should be lesss than oepning time");
+        require(t_closingTime >= t_openingTime, "closingTime should be lesss than opening time");
 
 
         _rate = trate;
