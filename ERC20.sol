@@ -1,7 +1,6 @@
-
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.3;
 
 interface IERC20 {
     function totalSupply() external view returns (uint);
@@ -146,10 +145,10 @@ contract ERC20Detailed is ERC20 {
     string private _symbol;
     uint8 private _decimals;
 
-    constructor (string memory name, string memory symbol, uint8 decimals) public {
-        _name = name;
-        _symbol = symbol;
-        _decimals = decimals;
+    constructor (string memory tname, string memory tsymbol, uint8 tdecimals) public {
+        _name = tname;
+        _symbol = tsymbol;
+        _decimals = tdecimals;
         
     }
     function name() public view returns (string memory) {
