@@ -330,7 +330,7 @@ contract sale is Owned{
         _weiRaised = _weiRaised.add(weiAmount);
         
         tokenHolders[beneficiary] = tokens;
-        _tenPercent = tokens * 10 / 100;
+        _tenPercent = tokenAmount.mul(10).div(100); 
         tenPercent[beneficiary] = _tenPercent;
         
              
