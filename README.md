@@ -5,7 +5,7 @@ Total Supply of 10,000,000 MEMEX tokens created
 
 Memex.sol indicates the Crowdsale Contract
 This will be used for the Crowdsale (private sale and Presale)
-20% of tokens purchased will initially be released to the buyer, with a vesting period - 10% unlock each month. 
+20% of tokens purchased will initially be released to the buyer(10% sent dirrectly+10% claimable right away), with a vesting period - 10% unlock each month. 
 This can be called from the function from the private sale contract.
 You may view each functions of the contracts once deployed under write contract.
 
