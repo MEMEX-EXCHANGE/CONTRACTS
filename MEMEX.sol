@@ -377,7 +377,7 @@ contract sale is Owned{
      */
     function withdrawTokens(address beneficiary) public whileClosed {
         uint256 tokenAmount = tokenHolders[beneficiary];
-        uint256 _20Percent = tokenAmount * 20 / 100;
+        uint256 _20Percent = tokenAmount * 10 / 100;
         _deliverTokens(beneficiary, _20Percent);
         tokenHolders[beneficiary] = tokenHolders[beneficiary] - _20Percent;
         emit tokenWithdrawn(beneficiary, _20Percent);
