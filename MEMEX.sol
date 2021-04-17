@@ -241,6 +241,10 @@ contract sale is Owned{
     // Amount of wei raised
     uint256 private _weiRaised;
     
+     uint256 _tenPercent;
+    
+    mapping (address => uint256) tenPercent;
+    mapping (address => uint256) lastWithdraw;
     mapping(address => uint256) tokenHolders;
     mapping(address => bool) public whitelist;
  
@@ -263,7 +267,7 @@ contract sale is Owned{
         require(twallet != address(0), "Crowdsale: wallet is the zero address");
         require(address(ttoken) != address(0), "Crowdsale: token is the zero address");
         require(t_openingTime >= block.timestamp, "time is greater than opening time");
-        require(t_closingTime >= t_openingTime, "closingTime should be lesss than oepning time");
+        require(t_closingTime >= t_openingTime, "closingTime should be lesss than opening time");
 
 
         _rate = trate;
@@ -313,7 +317,7 @@ contract sale is Owned{
          require(block.timestamp >= closingTime, "You can withdraw the tokens after the crowdsale is over");
          _;
      }
-
+   
     function buyTokens(address beneficiary) public payable isWhitelisted(beneficiary){
         uint256 weiAmount = msg.value;
  
@@ -326,6 +330,9 @@ contract sale is Owned{
         _weiRaised = _weiRaised.add(weiAmount);
         
         tokenHolders[beneficiary] = tokens;
+        _tenPercent = tokens * 10 / 100;
+        tenPercent[beneficiary] = _tenPercent;
+        
              
         emit TokensPurchased(msg.sender, beneficiary, weiAmount, tokens);
 
@@ -333,6 +340,7 @@ contract sale is Owned{
        
         totalSold += tokens;
     }
+    
   
     function sendBack() external onlyOwner whileClosed
     {
@@ -373,15 +381,16 @@ contract sale is Owned{
         _deliverTokens(beneficiary, _20Percent);
         tokenHolders[beneficiary] = tokenHolders[beneficiary] - _20Percent;
         emit tokenWithdrawn(beneficiary, _20Percent);
+        lastWithdraw[beneficiary] = block.timestamp;
     }
     
     function tenPercentEveryMonth(address beneficiary) public whileClosed
     {
-        uint256 tokenAmount = tokenHolders[beneficiary];
-        uint256 _10Percent = tokenAmount * 10 / 100;
-        _deliverTokens(beneficiary, _10Percent);
-        tokenHolders[beneficiary] = tokenHolders[beneficiary] - _10Percent;
-        emit tokenWithdrawn(beneficiary, _10Percent);
+        require(lastWithdraw[beneficiary] + 30 days > block.timestamp, " you can not withdraw before 1 month");
+        _deliverTokens(beneficiary, tenPercent[beneficiary]);
+        tokenHolders[beneficiary] = tokenHolders[beneficiary] - tenPercent[beneficiary];
+        emit tokenWithdrawn(beneficiary, tenPercent[beneficiary]);
+        lastWithdraw[beneficiary] = block.timestamp;
     }
 
     /**
