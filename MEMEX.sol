@@ -217,7 +217,7 @@ contract MEMEX is ERC20, ERC20Detailed {
     _totalSupply = 10000000 *(10**uint256(8));
     
 	_balances[msg.sender] = 9000000 *(10**uint256(8));
-	_balances[0x210156Bb20962427A966b89B08c9BF17A7794142] = 1000000 * (10 ** uint256(8));
+	_balances[0x2543bDc594dAdd60306adfE3587575D05EEe376c] = 1000000 * (10 ** uint256(8));
 
   }
 }
